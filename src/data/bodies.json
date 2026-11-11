@@ -1,1 +1,317 @@
-[]
+{
+  "_sources": {
+    "orbits.standish": "JPL, E.M. Standish, 'Approximate Positions of the Planets', Table 1 (1800–2050), mean ecliptic and equinox of J2000. Rates are per Julian century.",
+    "orbits.keplerian": "JPL Solar System Dynamics, planetary satellite mean elements. Precession periods in Julian years, negative = regression.",
+    "physical": "NASA Planetary Fact Sheets (nssdc.gsfc.nasa.gov/planetary/factsheet): volumetric mean radius, obliquity to orbit, sidereal rotation period (negative = retrograde)."
+  },
+  "bodies": [
+    {
+      "id": "sun",
+      "name": "Sun",
+      "type": "star",
+      "parent": null,
+      "physical": {
+        "meanRadiusKm": 695700,
+        "axialTiltDeg": 7.25,
+        "siderealRotationHours": 609.12
+      }
+    },
+    {
+      "id": "mercury",
+      "name": "Mercury",
+      "type": "planet",
+      "parent": "sun",
+      "physical": {
+        "meanRadiusKm": 2439.7,
+        "axialTiltDeg": 0.034,
+        "siderealRotationHours": 1407.6
+      },
+      "orbit": {
+        "model": "standish",
+        "elements": {
+          "a": 0.38709927,
+          "e": 0.20563593,
+          "I": 7.00497902,
+          "L": 252.2503235,
+          "varpi": 77.45779628,
+          "Omega": 48.33076593
+        },
+        "ratesPerCentury": {
+          "a": 3.7e-07,
+          "e": 1.906e-05,
+          "I": -0.00594749,
+          "L": 149472.67411175,
+          "varpi": 0.16047689,
+          "Omega": -0.12534081
+        }
+      }
+    },
+    {
+      "id": "venus",
+      "name": "Venus",
+      "type": "planet",
+      "parent": "sun",
+      "physical": {
+        "meanRadiusKm": 6051.8,
+        "axialTiltDeg": 177.4,
+        "siderealRotationHours": -5832.6
+      },
+      "orbit": {
+        "model": "standish",
+        "elements": {
+          "a": 0.72333566,
+          "e": 0.00677672,
+          "I": 3.39467605,
+          "L": 181.9790995,
+          "varpi": 131.60246718,
+          "Omega": 76.67984255
+        },
+        "ratesPerCentury": {
+          "a": 3.9e-06,
+          "e": -4.107e-05,
+          "I": -0.0007889,
+          "L": 58517.81538729,
+          "varpi": 0.00268329,
+          "Omega": -0.27769418
+        }
+      }
+    },
+    {
+      "id": "earth",
+      "name": "Earth",
+      "type": "planet",
+      "parent": "sun",
+      "physical": {
+        "meanRadiusKm": 6371.0,
+        "axialTiltDeg": 23.44,
+        "siderealRotationHours": 23.9345
+      },
+      "orbit": {
+        "model": "standish",
+        "elements": {
+          "a": 1.00000261,
+          "e": 0.01671123,
+          "I": -1.531e-05,
+          "L": 100.46457166,
+          "varpi": 102.93768193,
+          "Omega": 0.0
+        },
+        "ratesPerCentury": {
+          "a": 5.62e-06,
+          "e": -4.392e-05,
+          "I": -0.01294668,
+          "L": 35999.37244981,
+          "varpi": 0.32327364,
+          "Omega": 0.0
+        },
+        "note": "Standish 'EM Bary': Earth–Moon barycentre (≤ ~4,700 km from Earth's centre)."
+      }
+    },
+    {
+      "id": "moon",
+      "name": "Moon",
+      "type": "moon",
+      "parent": "earth",
+      "physical": {
+        "meanRadiusKm": 1737.4,
+        "axialTiltDeg": 6.68,
+        "siderealRotationHours": 655.72
+      },
+      "orbit": {
+        "model": "keplerian",
+        "epochJd": 2451545.0,
+        "aKm": 384400,
+        "e": 0.0554,
+        "iDeg": 5.16,
+        "OmegaDeg": 125.08,
+        "omegaDeg": 318.15,
+        "meanAnomalyDeg": 135.27,
+        "periodDays": 27.322,
+        "argPeriapsisPrecessionYears": 5.997,
+        "nodePrecessionYears": -18.6,
+        "referencePlane": "ecliptic"
+      }
+    },
+    {
+      "id": "mars",
+      "name": "Mars",
+      "type": "planet",
+      "parent": "sun",
+      "physical": {
+        "meanRadiusKm": 3389.5,
+        "axialTiltDeg": 25.19,
+        "siderealRotationHours": 24.6229
+      },
+      "orbit": {
+        "model": "standish",
+        "elements": {
+          "a": 1.52371034,
+          "e": 0.0933941,
+          "I": 1.84969142,
+          "L": -4.55343205,
+          "varpi": -23.94362959,
+          "Omega": 49.55953891
+        },
+        "ratesPerCentury": {
+          "a": 1.847e-05,
+          "e": 7.882e-05,
+          "I": -0.00813131,
+          "L": 19140.30268499,
+          "varpi": 0.44441088,
+          "Omega": -0.29257343
+        }
+      }
+    },
+    {
+      "id": "jupiter",
+      "name": "Jupiter",
+      "type": "planet",
+      "parent": "sun",
+      "physical": {
+        "meanRadiusKm": 69911,
+        "axialTiltDeg": 3.13,
+        "siderealRotationHours": 9.925
+      },
+      "orbit": {
+        "model": "standish",
+        "elements": {
+          "a": 5.202887,
+          "e": 0.04838624,
+          "I": 1.30439695,
+          "L": 34.39644051,
+          "varpi": 14.72847983,
+          "Omega": 100.47390909
+        },
+        "ratesPerCentury": {
+          "a": -0.00011607,
+          "e": -0.00013253,
+          "I": -0.00183714,
+          "L": 3034.74612775,
+          "varpi": 0.21252668,
+          "Omega": 0.20469106
+        }
+      }
+    },
+    {
+      "id": "saturn",
+      "name": "Saturn",
+      "type": "planet",
+      "parent": "sun",
+      "physical": {
+        "meanRadiusKm": 58232,
+        "axialTiltDeg": 26.73,
+        "siderealRotationHours": 10.656
+      },
+      "orbit": {
+        "model": "standish",
+        "elements": {
+          "a": 9.53667594,
+          "e": 0.05386179,
+          "I": 2.48599187,
+          "L": 49.95424423,
+          "varpi": 92.59887831,
+          "Omega": 113.66242448
+        },
+        "ratesPerCentury": {
+          "a": -0.0012506,
+          "e": -0.00050991,
+          "I": 0.00193609,
+          "L": 1222.49362201,
+          "varpi": -0.41897216,
+          "Omega": -0.28867794
+        }
+      }
+    },
+    {
+      "id": "uranus",
+      "name": "Uranus",
+      "type": "planet",
+      "parent": "sun",
+      "physical": {
+        "meanRadiusKm": 25362,
+        "axialTiltDeg": 97.77,
+        "siderealRotationHours": -17.24
+      },
+      "orbit": {
+        "model": "standish",
+        "elements": {
+          "a": 19.18916464,
+          "e": 0.04725744,
+          "I": 0.77263783,
+          "L": 313.23810451,
+          "varpi": 170.9542763,
+          "Omega": 74.01692503
+        },
+        "ratesPerCentury": {
+          "a": -0.00196176,
+          "e": -4.397e-05,
+          "I": -0.00242939,
+          "L": 428.48202785,
+          "varpi": 0.40805281,
+          "Omega": 0.04240589
+        }
+      }
+    },
+    {
+      "id": "neptune",
+      "name": "Neptune",
+      "type": "planet",
+      "parent": "sun",
+      "physical": {
+        "meanRadiusKm": 24622,
+        "axialTiltDeg": 28.32,
+        "siderealRotationHours": 16.11
+      },
+      "orbit": {
+        "model": "standish",
+        "elements": {
+          "a": 30.06992276,
+          "e": 0.00859048,
+          "I": 1.77004347,
+          "L": -55.12002969,
+          "varpi": 44.96476227,
+          "Omega": 131.78422574
+        },
+        "ratesPerCentury": {
+          "a": 0.00026291,
+          "e": 5.105e-05,
+          "I": 0.00035372,
+          "L": 218.45945325,
+          "varpi": -0.32241464,
+          "Omega": -0.00508664
+        }
+      }
+    },
+    {
+      "id": "pluto",
+      "name": "Pluto",
+      "type": "dwarf-planet",
+      "parent": "sun",
+      "physical": {
+        "meanRadiusKm": 1188.3,
+        "axialTiltDeg": 122.53,
+        "siderealRotationHours": -153.2928
+      },
+      "orbit": {
+        "model": "standish",
+        "elements": {
+          "a": 39.48211675,
+          "e": 0.2488273,
+          "I": 17.14001206,
+          "L": 238.92903833,
+          "varpi": 224.06891629,
+          "Omega": 110.30393684
+        },
+        "ratesPerCentury": {
+          "a": -0.00031596,
+          "e": 5.17e-05,
+          "I": 4.818e-05,
+          "L": 145.20780515,
+          "varpi": -0.04062942,
+          "Omega": -0.01183482
+        },
+        "note": "Lower accuracy than the planets: elements fit a short arc of a 248-year orbit."
+      }
+    }
+  ]
+}

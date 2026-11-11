@@ -20,6 +20,16 @@ npm run dev       # dev server with hot reload
 | `npm run preview` | Serve the production build locally (at `/solar-maps/`) |
 | `npm test` | Run the Vitest unit tests once |
 
+## Ephemeris ground truth
+
+`tests/fixtures/horizons.json` holds JPL Horizons heliocentric ecliptic-J2000 vectors that the ephemeris is tested against. Regenerate or extend it (edit `TARGETS`/`EPOCHS` in the script) with:
+
+```bash
+node scripts/fetch-horizons.mjs
+```
+
+Behind an HTTPS proxy on Node 22, prefix it with `NODE_USE_ENV_PROXY=1`.
+
 ## Deploy (GitHub Pages)
 
 Deployment is automatic via `.github/workflows/deploy.yml`: every push to `main` runs tests, builds, and publishes `dist/` to GitHub Pages.

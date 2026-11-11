@@ -1,0 +1,52 @@
+{
+  "_README": "JPL Horizons heliocentric position vectors used as ground truth. Regenerate with `node scripts/fetch-horizons.mjs`. To add entries by hand: Horizons → Ephemeris Type: Vector Table, Center: Sun (500@10), Reference plane: ecliptic, Reference frame: ICRF, Output units: AU-D, Time: TDB, Table: position only. Use system barycentres (3 = Earth–Moon, 4 = Mars, ...). Each entry may set an optional \"toleranceAu\" (default 0.01).",
+  "source": "JPL Horizons API (ssd.jpl.nasa.gov/api/horizons.api), DE441",
+  "frame": "Heliocentric (500@10), ecliptic and mean equinox of J2000.0, ICRF",
+  "units": "AU",
+  "timeScale": "TDB",
+  "retrieved": "2026-11-11",
+  "entries": [
+    {
+      "body": "earth",
+      "horizonsId": "3",
+      "horizonsName": "Earth-Moon Barycenter (3)",
+      "date": "2026-01-01T00:00:00Z",
+      "jd": 2461041.5,
+      "x": -0.1742697585483051,
+      "y": 0.9677856743241913,
+      "z": -0.0000568660813624551
+    },
+    {
+      "body": "mars",
+      "horizonsId": "4",
+      "horizonsName": "Mars Barycenter (4)",
+      "date": "2026-01-01T00:00:00Z",
+      "jd": 2461041.5,
+      "x": 0.3405796768620874,
+      "y": -1.387002015945923,
+      "z": -0.03741722678768196
+    },
+    {
+      "body": "jupiter",
+      "horizonsId": "5",
+      "horizonsName": "Jupiter Barycenter (5)",
+      "date": "2026-01-01T00:00:00Z",
+      "jd": 2461041.5,
+      "x": -1.694003030185846,
+      "y": 4.928882714636233,
+      "z": 0.0174262399033242
+    },
+    {
+      "body": "saturn",
+      "horizonsId": "6",
+      "horizonsName": "Saturn Barycenter (6)",
+      "date": "2026-01-01T00:00:00Z",
+      "jd": 2461041.5,
+      "x": 9.507343365221871,
+      "y": 0.2577384578021522,
+      "z": -0.3829355285077531,
+      "toleranceAu": 0.03,
+      "toleranceNote": "Standish Table 1 Saturn error is up to ~600 arcsec (≈0.03 AU) over 1800–2050."
+    }
+  ]
+}
