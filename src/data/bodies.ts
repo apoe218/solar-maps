@@ -36,8 +36,20 @@ export interface RenderData {
   rings?: RingData;
 }
 
+export interface KnownMoons {
+  /** officially recognised moons */
+  count: number;
+  /** "YYYY-MM" the count was checked */
+  asOf: string;
+}
+
 export interface BodyRecord extends OrbitingBody {
   name: string;
+  /** other names the search box should match ("Luna", "Red Planet") */
+  aliases: string[];
+  /** one or two plain-language sentences for the info panel */
+  description: string;
+  knownMoons?: KnownMoons;
   type: BodyType;
   physical: PhysicalData;
   rotation: RotationData;
@@ -73,6 +85,12 @@ export function parseBodies(doc: unknown): BodyRecord[] {
     if (ids.has(id)) fail(id, 'duplicate id');
     ids.add(id);
     if (typeof b.name !== 'string') fail(id, '"name" must be a string');
+    if (!Array.isArray(b.aliases) || !b.aliases.every((a) => typeof a === 'string')) fail(id, '"aliases" must be an array of strings');
+    if (typeof b.description !== 'string' || b.description.length === 0) fail(id, '"description" must be a non-empty string');
+    if (b.knownMoons !== undefined) {
+      requireNumbers(id, 'knownMoons', b.knownMoons, ['count']);
+      if (typeof (b.knownMoons as Obj).asOf !== 'string') fail(id, 'knownMoons.asOf must be a string');
+    }
     if (typeof b.type !== 'string' || !BODY_TYPES.includes(b.type)) fail(id, `"type" must be one of ${BODY_TYPES.join(', ')}`);
     if (b.parent !== null && typeof b.parent !== 'string') fail(id, '"parent" must be a string or null');
     requireNumbers(id, 'physical', b.physical, ['meanRadiusKm', 'axialTiltDeg', 'siderealRotationHours']);

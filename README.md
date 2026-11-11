@@ -47,12 +47,16 @@ The site is served at `https://<user>.github.io/solar-maps/`. Vite's `base` is s
 | Pan | right-drag (or Ctrl/⌘-drag) | two-finger drag |
 | Tilt toward the horizon | Shift-drag | — |
 | Select a body | click | tap |
-| Fly to a body | double-click, **Enter** on the selection, the *Fly to* button, or the *Fly to* menu | double-tap, or *Fly to* |
+| Fly to a body | double-click (body or label), **Enter** on the selection, a search result, or *Fly to* in the info panel | double-tap, or *Fly to* |
+| Search (fuzzy, names and aliases like "Luna") | **/** then type, ↑/↓, **Enter** | tap the search box |
 | Back to the solar-system view | **Esc** | — |
 | Focus the Sun | **Home** | — |
 
 Zoom steps are a fixed fraction of your altitude above the focused body, so one scroll does the same thing from 1,000 AU or from 10 km above a moon. Fly-to follows a zoom-out/travel/zoom-in curve whose duration grows with log distance, targets where the body *will be* on arrival (time keeps running), and stops as soon as you touch the controls.
 
+- **Labels**: overlapping labels are hidden by priority (Sun > planets > dwarf planets > moons), far-away ones fade, and moon labels appear only around the focused planet. Click a label to select, double-click to fly.
+- **Info panel** (right, collapsible): type, radius, live distance from the Sun and Earth, orbital period, day length, known moons, and a short description for the selected (or focused) body.
+- **Shareable URL**: the address bar always describes the view, e.g. `#body=mars&dist=20000km&view=15,27&t=2026-11-11`. `dist` is from the body's centre (`km`, `AU` or `m`), `view` is azimuth,elevation in degrees, and `t` (UTC date or `YYYY-MM-DDTHH:MMZ`) is omitted while the clock follows real time. Opening such a link restores the view; editing the hash flies there. *Copy link* (top right) copies it.
 - **Scale** (top right): *Explorer* keeps every body at least a few pixels across; *True scale* shows real sizes.
 - **Time bar** (bottom): play/pause, speed (1×, 1 day/s, 1 month/s, 1 yr/s), ⇄ reverse, *Now*. The date turns amber outside 1800–2050, where planet positions are less accurate.
 - **`` ` `` (backtick)**: debug overlay — fps, focus and nearest body with altitude, the camera's float64 world position, and scene-coordinate magnitudes with their float32 precision. Add `?debug` to the URL to start with it open (this also exposes `window.__orrery` for automated tests).

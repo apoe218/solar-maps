@@ -149,8 +149,17 @@ export class CameraController {
     this.copyPose(this.target, this.current);
   }
 
-  /** Fly to `body`. Arrives looking at it from `endDirection` (default: the current viewing direction). */
-  flyTo(body: FocusBody, opts: { endDistanceKm?: number; endDirection?: Vector3 } = {}): Flight {
+  /**
+   * Fly to `body`. Arrives looking at it from `endDirection` (default: the current viewing direction).
+   * `instant` (e.g. prefers-reduced-motion) jumps there and still fires `arrived`.
+   */
+  flyTo(body: FocusBody, opts: { endDistanceKm?: number; endDirection?: Vector3; instant?: boolean } = {}): Flight | null {
+    if (opts.instant) {
+      const dir = opts.endDirection ?? this.focus.world.clone().add(this.current.rel).sub(body.world);
+      this.setView(body, dir, opts.endDistanceKm ?? body.radiusKm * 4);
+      this.events.arrived?.(body);
+      return null;
+    }
     const startCamera = this.focus.world.clone().add(this.current.rel);
     const focusAtStart = this.focus;
     const flight = new Flight({
@@ -259,6 +268,9 @@ export class CameraController {
 
   private onPointerDown = (e: PointerEvent): void => {
     this.cancelFlight(); // any input interrupts a fly-to
+    // Clicking the map hands the keyboard back to it (arrows orbit, Enter flies to the selection).
+    const active = typeof document !== 'undefined' ? (document.activeElement as HTMLElement | null) : null;
+    if (active && active !== document.body && typeof active.blur === 'function') active.blur();
     this.dom.setPointerCapture?.(e.pointerId);
     this.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (this.pointers.size === 1) this.press = { x: e.clientX, y: e.clientY, t: performance.now(), moved: false, type: e.pointerType };
@@ -334,6 +346,8 @@ export class CameraController {
 
   private onKeyDown = (e: KeyboardEvent): void => {
     if (isTyping(e.target) || e.ctrlKey || e.metaKey || e.altKey) return;
+    // Enter on a focused button or link must activate it, not fly the camera.
+    if (e.key === 'Enter' && isControl(e.target)) return;
     switch (e.key) {
       case 'Escape': this.cancelFlight(); this.events.escape?.(); break;
       case 'Home': this.cancelFlight(); this.events.home?.(); break;
@@ -422,6 +436,12 @@ export class CameraController {
 
 function wrapAngle(a: number): number {
   return a - 2 * Math.PI * Math.floor((a + Math.PI) / (2 * Math.PI));
+}
+
+function isControl(t: EventTarget | null): boolean {
+  const el = t as HTMLElement | null;
+  return !!el && typeof el.tagName === 'string' &&
+    (/^(BUTTON|A|SUMMARY)$/.test(el.tagName) || /^(button|link|option|menuitem|tab)$/.test(el.getAttribute?.('role') ?? ''));
 }
 
 function isTyping(t: EventTarget | null): boolean {

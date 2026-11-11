@@ -75,3 +75,13 @@ export function bodyFixedLonLat(
   lonDeg = ((((lonDeg + 180) % 360) + 360) % 360) - 180;
   return { lonDeg: lonDeg === -180 ? 180 : lonDeg, latDeg };
 }
+
+/**
+ * Length of a solar day (Sun to Sun), in days, from the signed sidereal rotation period (negative =
+ * retrograde) and the period of the body's — or its parent planet's — orbit around the Sun:
+ * 1/solar = 1/rotation − 1/orbit. Returns Infinity when the two cancel (rotation locked to the Sun).
+ */
+export function solarDayDays(siderealRotationDays: number, heliocentricOrbitDays: number): number {
+  const f = 1 / siderealRotationDays - 1 / heliocentricOrbitDays;
+  return f === 0 ? Infinity : Math.abs(1 / f);
+}

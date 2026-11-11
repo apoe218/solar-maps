@@ -7,9 +7,11 @@ export function mountScaleToggle(parent: HTMLElement, initial: ScaleMode, onChan
   let mode = initial;
   const btn = document.createElement('button');
   btn.type = 'button';
-  btn.className = 'panel scale-toggle';
+  btn.className = 'scale-toggle';
   const sync = () => {
     btn.textContent = LABEL[mode];
+    btn.setAttribute('aria-pressed', String(mode === 'true'));
+    btn.setAttribute('aria-label', `True scale (currently ${LABEL[mode]})`);
     btn.title = mode === 'explorer'
       ? 'Bodies have a minimum on-screen size. Click for true scale.'
       : 'Real sizes and distances. Click for Explorer scale.';

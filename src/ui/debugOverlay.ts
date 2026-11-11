@@ -27,6 +27,7 @@ export function mountDebugOverlay(parent: HTMLElement, initiallyVisible = false)
   const el = document.createElement('pre');
   el.className = 'panel debug-overlay';
   el.hidden = !initiallyVisible;
+  el.setAttribute('role', 'region');
   el.setAttribute('aria-label', 'Debug overlay');
   parent.appendChild(el);
   window.addEventListener('keydown', (e) => {

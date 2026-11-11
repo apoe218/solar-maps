@@ -2,8 +2,9 @@ import { SPEEDS, SimClock, formatUtc } from './clock';
 
 /** Bottom bar: date, reverse, play/pause, speed, "now". Call the returned function every frame. */
 export function mountTimeControls(parent: HTMLElement, clock: SimClock): () => void {
-  const bar = document.createElement('div');
+  const bar = document.createElement('section');
   bar.className = 'panel time-controls';
+  bar.setAttribute('aria-label', 'Time controls');
   bar.innerHTML = `
     <span class="date" aria-live="off"></span>
     <button type="button" data-action="reverse" title="Reverse time">⇄</button>

@@ -288,6 +288,18 @@ describe('CameraController', () => {
     expect(camera.position.length()).toBe(0);
   });
 
+  it('Enter on a focused button activates the button instead of flying', () => {
+    const { c, keys } = setup();
+    let flew = false;
+    c.events = { enter: () => (flew = true) };
+    let prevented = false;
+    keys.keydown!({ key: 'Enter', target: { tagName: 'BUTTON', getAttribute: () => null }, preventDefault: () => (prevented = true) });
+    expect(flew).toBe(false);
+    expect(prevented).toBe(false);
+    keys.keydown!({ key: 'Enter', target: null, preventDefault() {} });
+    expect(flew).toBe(true);
+  });
+
   it('keys are ignored while typing in a form field', () => {
     const { c, keys } = setup();
     let escaped = false;
@@ -303,13 +315,26 @@ describe('CameraController', () => {
     view(c, bodies[0]!, 20000); // looking at Mars
     let arrived: string | null = null;
     c.events = { arrived: (f) => (arrived = f.id) };
-    const f = c.flyTo(bodies[1]!);
+    const f = c.flyTo(bodies[1]!)!;
     for (let t = 0; t < f.duration - 0.05; t += 1 / 60) c.update(1 / 60);
     expect(c.focus.id).toBe('mars');
     expect(arrived).toBe(null);
     for (let i = 0; i < 10; i++) c.update(1 / 60);
     expect(c.focus.id).toBe('phobos');
     expect(arrived).toBe('phobos');
+    expect(c.altitude).toBeCloseTo(3 * 11.05, 6);
+  });
+
+  it('instant fly-to (reduced motion) jumps and still reports arrival', () => {
+    const { c, bodies } = setup();
+    view(c, bodies[0]!, 20000);
+    let arrived: string | null = null;
+    c.events = { arrived: (f) => (arrived = f.id) };
+    expect(c.flyTo(bodies[1]!, { instant: true })).toBeNull();
+    c.update(1 / 60);
+    expect(c.isFlying).toBe(false);
+    expect(arrived).toBe('phobos');
+    expect(c.focus.id).toBe('phobos');
     expect(c.altitude).toBeCloseTo(3 * 11.05, 6);
   });
 

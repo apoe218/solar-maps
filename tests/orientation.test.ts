@@ -10,6 +10,7 @@ import {
   orbitalPeriodDays,
   primeMeridianDeg,
   scale,
+  solarDayDays,
   sub,
 } from '../src/ephemeris';
 
@@ -89,5 +90,17 @@ describe('orbitalPeriodDays', () => {
   it('Earth ≈ 365.256 d, Moon = 27.322 d', () => {
     expect(orbitalPeriodDays(body('earth').orbit!)).toBeCloseTo(365.256, 2);
     expect(orbitalPeriodDays(body('moon').orbit!)).toBe(27.322);
+  });
+});
+
+describe('solarDayDays', () => {
+  it.each([
+    ['Earth', 23.9345 / 24, 365.256, 1.0, 3],
+    ['Mercury', 1407.6 / 24, 87.969, 175.94, 1],
+    ['Venus (retrograde)', -5832.6 / 24, 224.701, 116.75, 1],
+    ['Moon (synodic month)', 27.3217, 365.256, 29.531, 2],
+    ['Mars', 24.6229 / 24, 686.98, 1.0275, 3],
+  ])('%s', (_name, rotation, orbit, expected, digits) => {
+    expect(solarDayDays(rotation, orbit)).toBeCloseTo(expected, digits);
   });
 });
