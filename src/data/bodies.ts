@@ -5,15 +5,43 @@ export type BodyType = 'star' | 'planet' | 'dwarf-planet' | 'moon';
 
 export interface PhysicalData {
   meanRadiusKm: number;
+  /** obliquity to orbit (fact sheet), deg — informational; orientation comes from the spin pole */
   axialTiltDeg: number;
-  /** negative = retrograde */
+  /** negative = retrograde (fact-sheet convention) */
   siderealRotationHours: number;
+}
+
+/** IAU WGCCRE rotational elements; W is the prime meridian angle east of the equator's node on the J2000 equator. */
+export interface RotationData {
+  poleRaDeg: number;
+  poleDecDeg: number;
+  w0Deg: number;
+  wDotDegPerDay: number;
+}
+
+export interface RingData {
+  innerKm: number;
+  outerKm: number;
+  /** radial strip texture: u = 0 at innerKm, u = 1 at outerKm */
+  texture?: string;
+}
+
+export interface RenderData {
+  /** CSS colour; used as a tint-free fallback when there is no texture */
+  color: string;
+  /** path relative to the site base, e.g. "textures/2k/earth_daymap.jpg" */
+  texture?: string;
+  /** Explorer-mode minimum on-screen diameter, px */
+  minPixels?: number;
+  rings?: RingData;
 }
 
 export interface BodyRecord extends OrbitingBody {
   name: string;
   type: BodyType;
   physical: PhysicalData;
+  rotation: RotationData;
+  render: RenderData;
   orbit?: Orbit;
 }
 
@@ -48,6 +76,11 @@ export function parseBodies(doc: unknown): BodyRecord[] {
     if (typeof b.type !== 'string' || !BODY_TYPES.includes(b.type)) fail(id, `"type" must be one of ${BODY_TYPES.join(', ')}`);
     if (b.parent !== null && typeof b.parent !== 'string') fail(id, '"parent" must be a string or null');
     requireNumbers(id, 'physical', b.physical, ['meanRadiusKm', 'axialTiltDeg', 'siderealRotationHours']);
+    requireNumbers(id, 'rotation', b.rotation, ['poleRaDeg', 'poleDecDeg', 'w0Deg', 'wDotDegPerDay']);
+    if (!isObj(b.render) || typeof b.render.color !== 'string') fail(id, 'render.color must be a string');
+    if (b.render.texture !== undefined && typeof b.render.texture !== 'string') fail(id, 'render.texture must be a string');
+    if (b.render.minPixels !== undefined) requireNumbers(id, 'render', b.render, ['minPixels']);
+    if (b.render.rings !== undefined) requireNumbers(id, 'render.rings', b.render.rings, ['innerKm', 'outerKm']);
     if (b.orbit !== undefined) {
       if (!isObj(b.orbit)) fail(id, '"orbit" must be an object');
       if (b.orbit.model === 'standish') {

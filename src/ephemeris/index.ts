@@ -7,3 +7,4 @@ export * from './orbit';
 export * from './planets';
 export * from './moons';
 export * from './positions';
+export * from './orientation';

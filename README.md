@@ -15,9 +15,9 @@ npm run dev       # dev server with hot reload
 
 | Script | What it does |
 | ------ | ------------ |
-| `npm run dev` | Start the Vite dev server |
+| `npm run dev` | Start the Vite dev server at http://localhost:5173/solar-maps/ |
 | `npm run build` | Type-check (`tsc`) and build to `dist/` |
-| `npm run preview` | Serve the production build locally (at `/solar-maps/`) |
+| `npm run preview` | Serve the production build at http://localhost:4173/solar-maps/ |
 | `npm test` | Run the Vitest unit tests once |
 
 ## Ephemeris ground truth
@@ -38,6 +38,19 @@ One-time setup: in the GitHub repo go to **Settings → Pages → Build and depl
 
 The site is served at `https://<user>.github.io/solar-maps/`. Vite's `base` is set to `/solar-maps/` for production builds in `vite.config.ts`; if you rename the repo, update `REPO_NAME` there (or set the `VITE_BASE` env var in the workflow).
 
+## Using it
+
+- **Drag** to orbit, **scroll / pinch** to zoom, **right-drag** to pan.
+- **Focus** (top left): centre the camera on a body and follow it (a stand-in until search / fly-to exist).
+- **Scale** (top right): *Explorer* keeps every body at least a few pixels across; *True scale* shows real sizes.
+- **Time bar** (bottom): play/pause, speed (1×, 1 day/s, 1 month/s, 1 yr/s), ⇄ reverse, *Now*. The date turns amber outside 1800–2050, where planet positions are less accurate.
+
 ## Textures
 
-Only public-domain (NASA/JPL/USGS) or CC-BY textures. Record every source and license in `public/textures/CREDITS.md`.
+2k textures live in `public/textures/2k/` and are committed. To (re)download them:
+
+```bash
+node scripts/fetch-textures.mjs
+```
+
+They come from [Solar System Scope](https://www.solarsystemscope.com/textures/) (CC BY 4.0). Each file, its source URL and licence are listed in [`public/textures/CREDITS.md`](public/textures/CREDITS.md). Only public-domain (NASA/JPL/USGS) or CC BY textures are allowed; record every new one there. A body whose texture is missing renders in its flat `render.color` from `bodies.json` (Pluto, for now).

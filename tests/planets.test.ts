@@ -18,8 +18,16 @@ describe('bodies.json', () => {
   });
 
   it('rejects bad data with a useful message', () => {
-    expect(() => parseBodies({ bodies: [{ id: 'x', name: 'X', type: 'planet', parent: 'nope',
-      physical: { meanRadiusKm: 1, axialTiltDeg: 0, siderealRotationHours: 1 } }] })).toThrow(/unknown parent "nope"/);
+    const ok = {
+      id: 'x', name: 'X', type: 'planet', parent: null,
+      physical: { meanRadiusKm: 1, axialTiltDeg: 0, siderealRotationHours: 1 },
+      rotation: { poleRaDeg: 0, poleDecDeg: 90, w0Deg: 0, wDotDegPerDay: 1 },
+      render: { color: '#fff' },
+    };
+    expect(() => parseBodies({ bodies: [ok] })).not.toThrow();
+    expect(() => parseBodies({ bodies: [{ ...ok, parent: 'nope' }] })).toThrow(/unknown parent "nope"/);
+    expect(() => parseBodies({ bodies: [{ ...ok, rotation: { poleRaDeg: 0 } }] })).toThrow(/rotation\.poleDecDeg/);
+    expect(() => parseBodies({ bodies: [{ ...ok, render: {} }] })).toThrow(/render\.color/);
   });
 });
 

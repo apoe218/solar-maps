@@ -1,52 +1,41 @@
-import {
-  AmbientLight,
-  Color,
-  Mesh,
-  MeshStandardMaterial,
-  PerspectiveCamera,
-  PointLight,
-  Scene,
-  SphereGeometry,
-  WebGLRenderer,
-} from 'three';
+import { AmbientLight, Color, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { auToScene } from './units';
 
-/** Minimal Phase 0 scene: a lit yellow sphere at the origin with orbit controls. */
-export function createScene(container: HTMLElement): void {
-  // Hard rule 2: logarithmic depth buffer for huge dynamic range.
+export interface SceneContext {
+  renderer: WebGLRenderer;
+  scene: Scene;
+  camera: PerspectiveCamera;
+  controls: OrbitControls;
+}
+
+/** Renderer, camera, controls and ambient light. Bodies (and the Sun's point light) are added by the caller. */
+export function createScene(container: HTMLElement): SceneContext {
+  // Hard rule 2: logarithmic depth buffer for the huge near/far range.
   const renderer = new WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(container.clientWidth, container.clientHeight);
   container.appendChild(renderer.domElement);
 
   const scene = new Scene();
   scene.background = new Color(0x000000);
+  scene.add(new AmbientLight(0xffffff, 0.06)); // faint fill so night sides aren't pure black
 
-  const camera = new PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 1e6);
-  camera.position.set(0, 2, 6);
-
-  const sun = new Mesh(
-    new SphereGeometry(1, 64, 32),
-    new MeshStandardMaterial({ color: 0xffcc00, emissive: 0x332200, roughness: 0.6 }),
-  );
-  scene.add(sun);
-
-  scene.add(new AmbientLight(0xffffff, 0.15));
-  const light = new PointLight(0xffffff, 60);
-  light.position.set(5, 4, 5);
-  scene.add(light);
+  // near = 1 km, far ≈ 670 AU (scene units are 10⁶ km)
+  const camera = new PerspectiveCamera(50, container.clientWidth / container.clientHeight, 1e-6, 1e5);
+  camera.position.set(0, auToScene(2.2), auToScene(2.6));
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
+  controls.zoomSpeed = 2;
+  controls.minDistance = 1e-5;
+  controls.maxDistance = auToScene(200);
 
   window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(container.clientWidth, container.clientHeight);
   });
 
-  renderer.setAnimationLoop(() => {
-    controls.update();
-    renderer.render(scene, camera);
-  });
+  return { renderer, scene, camera, controls };
 }

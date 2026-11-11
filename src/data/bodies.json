@@ -2,7 +2,9 @@
   "_sources": {
     "orbits.standish": "JPL, E.M. Standish, 'Approximate Positions of the Planets', Table 1 (1800–2050), mean ecliptic and equinox of J2000. Rates are per Julian century.",
     "orbits.keplerian": "JPL Solar System Dynamics, planetary satellite mean elements. Precession periods in Julian years, negative = regression.",
-    "physical": "NASA Planetary Fact Sheets (nssdc.gsfc.nasa.gov/planetary/factsheet): volumetric mean radius, obliquity to orbit, sidereal rotation period (negative = retrograde)."
+    "physical": "NASA Planetary Fact Sheets (nssdc.gsfc.nasa.gov/planetary/factsheet): volumetric mean radius, obliquity to orbit, sidereal rotation period (negative = retrograde). Informational; orientation comes from 'rotation'.",
+    "render": "Texture paths are relative to the site base (public/). Sources and licences: public/textures/CREDITS.md.",
+    "rotation": "IAU WGCCRE rotational elements (Archinal et al. 2011/2018): north pole RA/Dec in J2000 equatorial coordinates and prime meridian W = w0 + wDot·d, d = days since J2000. Pole and W follow IAU conventions exactly (Venus and Uranus: negative wDot; Pluto: positive pole). Moon and Neptune: periodic terms evaluated at J2000 and folded into the constants (the Moon's real pole circles with its 18.6-year node cycle). Mars: 2009 report values."
   },
   "bodies": [
     {
@@ -14,6 +16,17 @@
         "meanRadiusKm": 695700,
         "axialTiltDeg": 7.25,
         "siderealRotationHours": 609.12
+      },
+      "rotation": {
+        "poleRaDeg": 286.13,
+        "poleDecDeg": 63.87,
+        "w0Deg": 84.176,
+        "wDotDegPerDay": 14.1844
+      },
+      "render": {
+        "color": "#ffcc66",
+        "texture": "textures/2k/sun.jpg",
+        "minPixels": 12
       }
     },
     {
@@ -25,6 +38,16 @@
         "meanRadiusKm": 2439.7,
         "axialTiltDeg": 0.034,
         "siderealRotationHours": 1407.6
+      },
+      "rotation": {
+        "poleRaDeg": 281.0103,
+        "poleDecDeg": 61.4155,
+        "w0Deg": 329.5988,
+        "wDotDegPerDay": 6.1385108
+      },
+      "render": {
+        "color": "#9a9590",
+        "texture": "textures/2k/mercury.jpg"
       },
       "orbit": {
         "model": "standish",
@@ -53,8 +76,18 @@
       "parent": "sun",
       "physical": {
         "meanRadiusKm": 6051.8,
-        "axialTiltDeg": 177.4,
+        "axialTiltDeg": 177.36,
         "siderealRotationHours": -5832.6
+      },
+      "rotation": {
+        "poleRaDeg": 272.76,
+        "poleDecDeg": 67.16,
+        "w0Deg": 160.2,
+        "wDotDegPerDay": -1.4813688
+      },
+      "render": {
+        "color": "#e6c88a",
+        "texture": "textures/2k/venus_atmosphere.jpg"
       },
       "orbit": {
         "model": "standish",
@@ -85,6 +118,16 @@
         "meanRadiusKm": 6371.0,
         "axialTiltDeg": 23.44,
         "siderealRotationHours": 23.9345
+      },
+      "rotation": {
+        "poleRaDeg": 0.0,
+        "poleDecDeg": 90.0,
+        "w0Deg": 190.147,
+        "wDotDegPerDay": 360.9856235
+      },
+      "render": {
+        "color": "#4a7bd0",
+        "texture": "textures/2k/earth_daymap.jpg"
       },
       "orbit": {
         "model": "standish",
@@ -117,6 +160,16 @@
         "axialTiltDeg": 6.68,
         "siderealRotationHours": 655.72
       },
+      "rotation": {
+        "poleRaDeg": 266.8194,
+        "poleDecDeg": 65.6538,
+        "w0Deg": 41.2367,
+        "wDotDegPerDay": 13.17635815
+      },
+      "render": {
+        "color": "#bbbbbb",
+        "texture": "textures/2k/moon.jpg"
+      },
       "orbit": {
         "model": "keplerian",
         "epochJd": 2451545.0,
@@ -141,6 +194,16 @@
         "meanRadiusKm": 3389.5,
         "axialTiltDeg": 25.19,
         "siderealRotationHours": 24.6229
+      },
+      "rotation": {
+        "poleRaDeg": 317.68143,
+        "poleDecDeg": 52.8865,
+        "w0Deg": 176.63,
+        "wDotDegPerDay": 350.89198226
+      },
+      "render": {
+        "color": "#c1440e",
+        "texture": "textures/2k/mars.jpg"
       },
       "orbit": {
         "model": "standish",
@@ -172,6 +235,16 @@
         "axialTiltDeg": 3.13,
         "siderealRotationHours": 9.925
       },
+      "rotation": {
+        "poleRaDeg": 268.056595,
+        "poleDecDeg": 64.495303,
+        "w0Deg": 284.95,
+        "wDotDegPerDay": 870.536
+      },
+      "render": {
+        "color": "#d8b48a",
+        "texture": "textures/2k/jupiter.jpg"
+      },
       "orbit": {
         "model": "standish",
         "elements": {
@@ -201,6 +274,21 @@
         "meanRadiusKm": 58232,
         "axialTiltDeg": 26.73,
         "siderealRotationHours": 10.656
+      },
+      "rotation": {
+        "poleRaDeg": 40.589,
+        "poleDecDeg": 83.537,
+        "w0Deg": 38.9,
+        "wDotDegPerDay": 810.7939024
+      },
+      "render": {
+        "color": "#e3cf98",
+        "texture": "textures/2k/saturn.jpg",
+        "rings": {
+          "innerKm": 74500,
+          "outerKm": 136780,
+          "texture": "textures/2k/saturn_ring_alpha.png"
+        }
       },
       "orbit": {
         "model": "standish",
@@ -232,6 +320,16 @@
         "axialTiltDeg": 97.77,
         "siderealRotationHours": -17.24
       },
+      "rotation": {
+        "poleRaDeg": 257.311,
+        "poleDecDeg": -15.175,
+        "w0Deg": 203.81,
+        "wDotDegPerDay": -501.1600928
+      },
+      "render": {
+        "color": "#a6e1e8",
+        "texture": "textures/2k/uranus.jpg"
+      },
       "orbit": {
         "model": "standish",
         "elements": {
@@ -262,6 +360,16 @@
         "axialTiltDeg": 28.32,
         "siderealRotationHours": 16.11
       },
+      "rotation": {
+        "poleRaDeg": 299.3337,
+        "poleDecDeg": 42.9504,
+        "w0Deg": 253.18,
+        "wDotDegPerDay": 536.3128492
+      },
+      "render": {
+        "color": "#4b70dd",
+        "texture": "textures/2k/neptune.jpg"
+      },
       "orbit": {
         "model": "standish",
         "elements": {
@@ -288,9 +396,18 @@
       "type": "dwarf-planet",
       "parent": "sun",
       "physical": {
-        "meanRadiusKm": 1188.3,
-        "axialTiltDeg": 122.53,
+        "meanRadiusKm": 1188,
+        "axialTiltDeg": 119.51,
         "siderealRotationHours": -153.2928
+      },
+      "rotation": {
+        "poleRaDeg": 132.993,
+        "poleDecDeg": -6.163,
+        "w0Deg": 302.695,
+        "wDotDegPerDay": 56.3625225
+      },
+      "render": {
+        "color": "#c9b39b"
       },
       "orbit": {
         "model": "standish",
