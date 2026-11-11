@@ -1,0 +1,33 @@
+{
+  "name": "orrery",
+  "version": "0.0.0",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apoe218/solar-maps.git"
+  },
+  "bugs": {
+    "url": "https://github.com/apoe218/solar-maps/issues"
+  },
+  "homepage": "https://github.com/apoe218/solar-maps#readme",
+  "dependencies": {
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/three": "^0.187.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  },
+  "private": true,
+  "type": "module"
+}

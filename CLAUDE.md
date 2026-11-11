@@ -50,4 +50,7 @@ tests/                 vitest specs
 
 ## Status
 Update this section at the end of each phase: what's done, what's next, known issues.
-- [ ] Phase 0 — scaffold + deploy
+- [x] Phase 0 — scaffold + deploy
+  - Done: Vite + strict TS + Three.js + Vitest scaffold; folder layout with placeholders; minimal scene (black bg, lit yellow sphere, OrbitControls, log depth buffer); `scene/units.ts` stub; `ephemeris/` with `daysSinceJ2000` + tests; GitHub Actions deploy workflow (Vite `base` = `/solar-maps/`); README. `npm run build && npm test` pass.
+  - Next (Phase 1): real ephemeris (Standish Table 1) with Horizons fixtures, bodies.json + data-driven Body, floating origin, camera controller.
+  - Known issues / manual steps: enable Settings → Pages → Source: GitHub Actions on the repo before the first deploy; the workflow is untested until pushed to `main`; bundle is ~555 kB (Three.js) and triggers Vite's chunk-size warning.
