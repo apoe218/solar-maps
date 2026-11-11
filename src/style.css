@@ -38,3 +38,7 @@ button.active { border-color: var(--accent); color: var(--accent); }
   .scale-toggle { top: 8px; right: 8px; }
   .focus-select { top: 8px; left: 8px; }
 }
+
+.debug-overlay { top: 64px; left: 16px; margin: 0; padding: 8px 10px; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: pre; pointer-events: none; max-width: calc(100vw - 32px); overflow: hidden; }
+@media (max-width: 600px) { .debug-overlay { top: 56px; left: 8px; font-size: 10px; } }

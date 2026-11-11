@@ -4,6 +4,7 @@ export * from './time';
 export * from './vector';
 export * from './kepler';
 export * from './orbit';
+export * from './ellipse';
 export * from './planets';
 export * from './moons';
 export * from './positions';

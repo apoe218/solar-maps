@@ -1,5 +1,5 @@
-import { DAYS_PER_CENTURY, J2000_JD, deg2rad } from './constants';
-import { equatorialToEcliptic, type KeplerianOrbit } from './moons';
+import { DAYS_PER_CENTURY, DAYS_PER_JULIAN_YEAR, J2000_JD, deg2rad } from './constants';
+import { equatorialToEcliptic, referenceToEcliptic, type KeplerianOrbit } from './moons';
 import type { StandishOrbit } from './planets';
 import { centuriesSinceJ2000 } from './time';
 import type { Vec3 } from './vector';
@@ -12,17 +12,15 @@ export function equatorialDirectionToEcliptic(raDeg: number, decDeg: number): Ve
 
 /** Unit orbit normal (direction of orbital angular momentum), ecliptic J2000, at Julian Date `jd`. */
 export function orbitNormal(orbit: StandishOrbit | KeplerianOrbit, jd: number): Vec3 {
-  let I: number, Omega: number;
+  const normal = (I: number, Omega: number): Vec3 =>
+    ({ x: Math.sin(I) * Math.sin(Omega), y: -Math.sin(I) * Math.cos(Omega), z: Math.cos(I) });
   if (orbit.model === 'standish') {
     const T = centuriesSinceJ2000(jd);
-    I = deg2rad(orbit.elements.I + orbit.ratesPerCentury.I * T);
-    Omega = deg2rad(orbit.elements.Omega + orbit.ratesPerCentury.Omega * T);
-  } else {
-    // At epoch, ignoring precession and the reference plane's tilt (exact for ecliptic-referred orbits).
-    I = deg2rad(orbit.iDeg);
-    Omega = deg2rad(orbit.OmegaDeg);
+    return normal(deg2rad(orbit.elements.I + orbit.ratesPerCentury.I * T), deg2rad(orbit.elements.Omega + orbit.ratesPerCentury.Omega * T));
   }
-  return { x: Math.sin(I) * Math.sin(Omega), y: -Math.sin(I) * Math.cos(Omega), z: Math.cos(I) };
+  const nodeRate = orbit.nodePrecessionYears ? 360 / (orbit.nodePrecessionYears * DAYS_PER_JULIAN_YEAR) : 0;
+  const Omega = orbit.OmegaDeg + nodeRate * (jd - orbit.epochJd);
+  return referenceToEcliptic(normal(deg2rad(orbit.iDeg), deg2rad(Omega)), orbit.referencePlane);
 }
 
 /** Sidereal orbital period in days. */

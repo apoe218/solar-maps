@@ -40,8 +40,9 @@ The site is served at `https://<user>.github.io/solar-maps/`. Vite's `base` is s
 
 ## Using it
 
-- **Drag** to orbit, **scroll / pinch** to zoom, **right-drag** to pan.
+- **Drag** to orbit the focused body, **scroll / pinch** to zoom (zoom speed is proportional to altitude, so you can go from the whole solar system to ~10 km above a moon), **Shift-drag or right-drag up** to tilt toward the horizon.
 - **Focus** (top left): centre the camera on a body and follow it (a stand-in until search / fly-to exist).
+- **`` ` `` (backtick)**: debug overlay — fps, focus and nearest body with altitude, the camera's float64 world position, and scene-coordinate magnitudes with their float32 precision. Add `?debug` to the URL to start with it open (this also exposes `window.__orrery` for automated tests).
 - **Scale** (top right): *Explorer* keeps every body at least a few pixels across; *True scale* shows real sizes.
 - **Time bar** (bottom): play/pause, speed (1×, 1 day/s, 1 month/s, 1 yr/s), ⇄ reverse, *Now*. The date turns amber outside 1800–2050, where planet positions are less accurate.
 

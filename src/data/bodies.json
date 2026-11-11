@@ -2,9 +2,9 @@
   "_sources": {
     "orbits.standish": "JPL, E.M. Standish, 'Approximate Positions of the Planets', Table 1 (1800–2050), mean ecliptic and equinox of J2000. Rates are per Julian century.",
     "orbits.keplerian": "JPL Solar System Dynamics, planetary satellite mean elements. Precession periods in Julian years, negative = regression.",
-    "physical": "NASA Planetary Fact Sheets (nssdc.gsfc.nasa.gov/planetary/factsheet): volumetric mean radius, obliquity to orbit, sidereal rotation period (negative = retrograde). Informational; orientation comes from 'rotation'.",
+    "physical": "NASA Planetary Fact Sheets (nssdc.gsfc.nasa.gov/planetary/factsheet): volumetric mean radius, obliquity to orbit, sidereal rotation period (negative = retrograde). Informational; orientation comes from 'rotation'. Phobos: mean radius is the volumetric mean of the fact-sheet triaxial radii 13.0 × 11.4 × 9.1 km; rotation is synchronous (fact-sheet period 0.31891 d), obliquity to orbit taken as 0.",
     "render": "Texture paths are relative to the site base (public/). Sources and licences: public/textures/CREDITS.md.",
-    "rotation": "IAU WGCCRE rotational elements (Archinal et al. 2011/2018): north pole RA/Dec in J2000 equatorial coordinates and prime meridian W = w0 + wDot·d, d = days since J2000. Pole and W follow IAU conventions exactly (Venus and Uranus: negative wDot; Pluto: positive pole). Moon and Neptune: periodic terms evaluated at J2000 and folded into the constants (the Moon's real pole circles with its 18.6-year node cycle). Mars: 2009 report values."
+    "rotation": "IAU WGCCRE rotational elements (Archinal et al. 2011/2018): north pole RA/Dec in J2000 equatorial coordinates and prime meridian W = w0 + wDot·d, d = days since J2000. Pole and W follow IAU conventions exactly (Venus and Uranus: negative wDot; Pluto: positive pole). Moon and Neptune: periodic terms evaluated at J2000 and folded into the constants (the Moon's real pole circles with its 18.6-year node cycle). Mars: 2009 report values. Phobos: IAU 2015 values with the M1–M4 periodic terms evaluated at J2000."
   },
   "bodies": [
     {
@@ -223,6 +223,44 @@
           "varpi": 0.44441088,
           "Omega": -0.29257343
         }
+      }
+    },
+    {
+      "id": "phobos",
+      "name": "Phobos",
+      "type": "moon",
+      "parent": "mars",
+      "physical": {
+        "meanRadiusKm": 11.05,
+        "axialTiltDeg": 0.0,
+        "siderealRotationHours": 7.65384
+      },
+      "rotation": {
+        "poleRaDeg": 318.0129,
+        "poleDecDeg": 53.9454,
+        "w0Deg": 34.7365,
+        "wDotDegPerDay": 1128.84475928
+      },
+      "render": {
+        "color": "#8a7f74"
+      },
+      "orbit": {
+        "model": "keplerian",
+        "epochJd": 2451545.0,
+        "aKm": 9375,
+        "e": 0.015,
+        "iDeg": 1.1,
+        "OmegaDeg": 169.2,
+        "omegaDeg": 216.3,
+        "meanAnomalyDeg": 189.7,
+        "periodDays": 0.3189101,
+        "argPeriapsisPrecessionYears": 1.1,
+        "nodePrecessionYears": -2.3,
+        "referencePlane": {
+          "poleRaDeg": 317.7,
+          "poleDecDeg": 52.9
+        },
+        "note": "JPL SSD mean elements (Brozović et al. 2025), Laplace plane. periodDays = 360°/IAU synchronous rate (1128.84475928°/d); the SSD table's 0.3187 d is too coarse (≈7 orbits/decade drift). Ignores Phobos's tidal decay."
       }
     },
     {

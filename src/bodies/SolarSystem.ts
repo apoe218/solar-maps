@@ -1,13 +1,24 @@
-import { Group, PerspectiveCamera, PointLight, Vector3 } from 'three';
+import { Group, PointLight, Vector3, type PerspectiveCamera } from 'three';
 import type { BodyRecord } from '../data/bodies';
 import { relativePosition } from '../ephemeris';
-import { eclipticAuToScene } from '../scene/units';
+import { eclipticAuToWorldKm, worldToScene } from '../scene/units';
 import { Body } from './Body';
 import { OrbitLine } from './OrbitLine';
 import type { ScaleMode } from './scaleMode';
 import type { TextureLoaderFn } from './textures';
 
-/** Builds every body and orbit line from bodies.json and moves them for a given time. */
+export interface RenderStats {
+  /** body whose surface is closest to the camera, and the camera's altitude above it (km) */
+  nearestId: string;
+  nearestAltitudeKm: number;
+  /** largest |coordinate| of any object root placed in the scene this frame (scene units) */
+  maxSceneCoord: number;
+}
+
+/**
+ * Builds every body and orbit line from bodies.json. `setTime` updates float64 world positions;
+ * `render` places everything relative to the camera (floating origin).
+ */
 export class SolarSystem {
   readonly group = new Group();
   readonly bodies: Body[] = [];
@@ -39,27 +50,38 @@ export class SolarSystem {
     return this.byId.get(id);
   }
 
-  /** Position bodies and orbit lines for Julian Date `jd`. */
+  /** Update float64 world positions, spins and orbit lines for Julian Date `jd`. */
   setTime(jd: number): void {
     for (const body of this.bodies) {
+      eclipticAuToWorldKm(relativePosition(body.record, jd), body.world);
       const parent = body.record.parent ? this.byId.get(body.record.parent) : undefined;
-      eclipticAuToScene(relativePosition(body.record, jd), this.tmp);
-      body.root.position.copy(this.tmp);
-      if (parent) body.root.position.add(parent.root.position);
+      if (parent) body.world.add(parent.world);
       body.setTime(jd);
-      const orbit = this.orbits.get(body.record.id);
-      if (orbit) {
-        orbit.update(jd);
-        if (parent) orbit.line.position.copy(parent.root.position);
-      }
+      this.orbits.get(body.record.id)?.update(jd);
     }
   }
 
-  /** Apply the scale mode (Explorer needs the camera to compute pixel sizes). */
-  setScale(mode: ScaleMode, camera: PerspectiveCamera, viewportHeightPx: number): void {
+  /**
+   * Floating origin: place every object at (world − cameraWorld) so the camera is at the origin,
+   * and choose sphere / dot appearance. `camera` must already sit at (0,0,0).
+   */
+  render(cameraWorldKm: Vector3, camera: PerspectiveCamera, viewportHeightPx: number, mode: ScaleMode): RenderStats {
+    const stats: RenderStats = { nearestId: '', nearestAltitudeKm: Infinity, maxSceneCoord: 0 };
     for (const body of this.bodies) {
-      body.setScale(mode, camera.position.distanceTo(body.root.position), camera.fov, viewportHeightPx);
+      worldToScene(body.world, cameraWorldKm, body.root.position);
+      const orbit = this.orbits.get(body.record.id);
+      if (orbit) orbit.line.position.copy(body.root.position); // lines are stored relative to their body
+      const distKm = this.tmp.subVectors(body.world, cameraWorldKm).length(); // float64
+      body.updateAppearance(mode, distKm, camera.fov, viewportHeightPx);
+      const altitude = distKm - body.radiusKm;
+      if (altitude < stats.nearestAltitudeKm) {
+        stats.nearestAltitudeKm = altitude;
+        stats.nearestId = body.record.id;
+      }
+      const p = body.root.position;
+      stats.maxSceneCoord = Math.max(stats.maxSceneCoord, Math.abs(p.x), Math.abs(p.y), Math.abs(p.z));
     }
+    return stats;
   }
 }
 

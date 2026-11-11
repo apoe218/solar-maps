@@ -1,21 +1,25 @@
 import { BufferAttribute, BufferGeometry, Color, LineBasicMaterial, LineLoop, Vector3 } from 'three';
 import type { BodyRecord } from '../data/bodies';
-import { orbitalPeriodDays, relativePosition } from '../ephemeris';
-import { eclipticAuToScene } from '../scene/units';
+import { ellipsePoint, orbitEllipse, orbitalPeriodDays } from '../ephemeris';
+import { eclipticAuToSceneDelta } from '../scene/units';
 
 export const ORBIT_SAMPLES = 360;
 
 /**
- * Closed polyline of one full orbital period, sampled from the ephemeris (relative to the parent).
- * Sampling starts at the current time, so the body sits exactly on vertex 0; it is re-sampled once
- * the body has moved half a segment, keeping the line through the body as elements drift.
- * The owner positions `line` at the parent's centre each frame.
+ * One full orbit drawn as a 360-point closed polyline, from the ephemeris' osculating ellipse at the
+ * current time (sampled evenly in eccentric anomaly, starting at the body).
+ *
+ * Vertices are stored relative to the BODY, and the owner places the line at the body each frame.
+ * Near the body — the only place you can see it up close — vertices are ≈ 0 and keep full float32
+ * precision, and the line always passes exactly through the body. Re-sampling costs 1 Kepler solve +
+ * 360 sin/cos, so it is cheap enough to do whenever time changes.
  */
 export class OrbitLine {
   readonly line: LineLoop;
   readonly periodDays: number;
   private sampledJd = Number.NaN;
   private readonly positions: Float32Array;
+  private readonly tmp = new Vector3();
 
   constructor(readonly record: BodyRecord & { orbit: NonNullable<BodyRecord['orbit']> }) {
     this.periodDays = orbitalPeriodDays(record.orbit);
@@ -28,22 +32,20 @@ export class OrbitLine {
     this.line.frustumCulled = false;
   }
 
-  /** Re-sample if needed. Returns true if the geometry changed. */
+  /** Re-sample for Julian Date `jd` if it changed. Returns true if the geometry changed. */
   update(jd: number): boolean {
-    if (Math.abs(jd - this.sampledJd) < this.periodDays / ORBIT_SAMPLES / 2) return false;
-    this.sample(jd);
-    return true;
-  }
-
-  private sample(jd: number): void {
-    const v = new Vector3();
+    if (jd === this.sampledJd) return false;
+    const el = orbitEllipse(this.record.orbit, jd);
+    const here = ellipsePoint(el, el.E);
     for (let k = 0; k < ORBIT_SAMPLES; k++) {
-      eclipticAuToScene(relativePosition(this.record, jd + (k / ORBIT_SAMPLES) * this.periodDays), v);
-      this.positions.set([v.x, v.y, v.z], k * 3);
+      const p = ellipsePoint(el, el.E + (2 * Math.PI * k) / ORBIT_SAMPLES);
+      eclipticAuToSceneDelta({ x: p.x - here.x, y: p.y - here.y, z: p.z - here.z }, this.tmp);
+      this.positions[k * 3] = this.tmp.x;
+      this.positions[k * 3 + 1] = this.tmp.y;
+      this.positions[k * 3 + 2] = this.tmp.z;
     }
-    const geometry = this.line.geometry;
-    geometry.attributes.position!.needsUpdate = true;
-    geometry.computeBoundingSphere();
+    this.line.geometry.attributes.position!.needsUpdate = true;
     this.sampledJd = jd;
+    return true;
   }
 }

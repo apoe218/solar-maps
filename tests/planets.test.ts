@@ -11,9 +11,9 @@ describe('bodies.json', () => {
     expect(() => parseBodies(raw)).not.toThrow();
   });
 
-  it('has the Sun, eight planets, Pluto and the Moon', () => {
+  it('has the Sun, eight planets, Pluto, the Moon and Phobos', () => {
     expect(BODIES.map((b) => b.id).sort()).toEqual(
-      ['earth', 'jupiter', 'mars', 'mercury', 'moon', 'neptune', 'pluto', 'saturn', 'sun', 'uranus', 'venus'],
+      ['earth', 'jupiter', 'mars', 'mercury', 'moon', 'neptune', 'phobos', 'pluto', 'saturn', 'sun', 'uranus', 'venus'],
     );
   });
 

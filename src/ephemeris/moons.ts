@@ -1,6 +1,5 @@
-import { AU_KM, DAYS_PER_JULIAN_YEAR, OBLIQUITY_J2000_DEG, deg2rad } from './constants';
-import { solveKepler } from './kepler';
-import { orbitalPlanePosition, orbitalToReference } from './orbit';
+import { OBLIQUITY_J2000_DEG, deg2rad } from './constants';
+import { ellipsePoint, orbitEllipse } from './ellipse';
 import type { Vec3 } from './vector';
 
 /**
@@ -35,9 +34,6 @@ export interface KeplerianOrbit {
   referencePlane: ReferencePlane;
 }
 
-const precessionRate = (years: number | undefined): number =>
-  years ? 360 / (years * DAYS_PER_JULIAN_YEAR) : 0; // deg/day
-
 /** Rotate from equatorial J2000 to ecliptic J2000 (rotation about x by −ε). */
 export function equatorialToEcliptic(v: Vec3): Vec3 {
   const eps = deg2rad(OBLIQUITY_J2000_DEG);
@@ -46,7 +42,7 @@ export function equatorialToEcliptic(v: Vec3): Vec3 {
 }
 
 /** Rotate a vector from a plane with the given equatorial pole into equatorial J2000. */
-function planeToEquatorial(v: Vec3, poleRaDeg: number, poleDecDeg: number): Vec3 {
+export function planeToEquatorial(v: Vec3, poleRaDeg: number, poleDecDeg: number): Vec3 {
   // Plane frame: x = ascending node on the equator (RA α+90°), z = pole.
   // This is orbitalToReference with Ω = α + 90°, I = 90° − δ, ω = 0.
   const ra = deg2rad(poleRaDeg), dec = deg2rad(poleDecDeg);
@@ -66,23 +62,12 @@ function planeToEquatorial(v: Vec3, poleRaDeg: number, poleDecDeg: number): Vec3
 
 /** Position of a moon relative to its parent, ecliptic J2000, AU, at Julian Date `jd`. */
 export function keplerianPosition(orbit: KeplerianOrbit, jd: number): Vec3 {
-  const dt = jd - orbit.epochJd;
-  const dOmega = precessionRate(orbit.nodePrecessionYears);
-  const domega = precessionRate(orbit.argPeriapsisPrecessionYears);
-  const Omega = orbit.OmegaDeg + dOmega * dt;
-  const omega = orbit.omegaDeg + domega * dt;
-  // periodDays is sidereal (mean longitude λ = Ω + ω + M), so M advances at n − dϖ/dt.
-  const n = 360 / orbit.periodDays;
-  const M = orbit.meanAnomalyDeg + (n - dOmega - domega) * dt;
+  const el = orbitEllipse(orbit, jd);
+  return ellipsePoint(el, el.E);
+}
 
-  const E = solveKepler(deg2rad(M), orbit.e);
-  const inPlane = orbitalToReference(
-    orbitalPlanePosition(orbit.aKm / AU_KM, orbit.e, E),
-    deg2rad(omega),
-    deg2rad(Omega),
-    deg2rad(orbit.iDeg),
-  );
-  const plane = orbit.referencePlane;
-  if (plane === 'ecliptic') return inPlane;
-  return equatorialToEcliptic(planeToEquatorial(inPlane, plane.poleRaDeg, plane.poleDecDeg));
+/** Rotate a vector from an orbit's reference plane frame into ecliptic J2000. */
+export function referenceToEcliptic(v: Vec3, plane: ReferencePlane): Vec3 {
+  if (plane === 'ecliptic') return v;
+  return equatorialToEcliptic(planeToEquatorial(v, plane.poleRaDeg, plane.poleDecDeg));
 }

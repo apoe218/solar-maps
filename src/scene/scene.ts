@@ -1,17 +1,20 @@
 import { AmbientLight, Color, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { auToScene } from './units';
+import { kmToScene } from './units';
 
 export interface SceneContext {
   renderer: WebGLRenderer;
   scene: Scene;
   camera: PerspectiveCamera;
-  controls: OrbitControls;
 }
 
-/** Renderer, camera, controls and ambient light. Bodies (and the Sun's point light) are added by the caller. */
+/** Near and far planes for the whole range: 1 m (10 km above Phobos needs ≪ 10 km) to ~700 AU. */
+export const NEAR_KM = 1e-3;
+export const FAR_KM = 1e11;
+
+/** Renderer, camera and ambient light. The camera stays at the origin (floating origin); only it rotates. */
 export function createScene(container: HTMLElement): SceneContext {
-  // Hard rule 2: logarithmic depth buffer for the huge near/far range.
+  // Hard rule 2: a logarithmic depth buffer makes depth precision relative (≈1e-6 of distance at any range),
+  // so a 1 m … 10¹¹ km near/far range doesn't z-fight.
   const renderer = new WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setSize(container.clientWidth, container.clientHeight);
@@ -21,15 +24,7 @@ export function createScene(container: HTMLElement): SceneContext {
   scene.background = new Color(0x000000);
   scene.add(new AmbientLight(0xffffff, 0.06)); // faint fill so night sides aren't pure black
 
-  // near = 1 km, far ≈ 670 AU (scene units are 10⁶ km)
-  const camera = new PerspectiveCamera(50, container.clientWidth / container.clientHeight, 1e-6, 1e5);
-  camera.position.set(0, auToScene(2.2), auToScene(2.6));
-
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.zoomSpeed = 2;
-  controls.minDistance = 1e-5;
-  controls.maxDistance = auToScene(200);
+  const camera = new PerspectiveCamera(50, container.clientWidth / container.clientHeight, kmToScene(NEAR_KM), kmToScene(FAR_KM));
 
   window.addEventListener('resize', () => {
     camera.aspect = container.clientWidth / container.clientHeight;
@@ -37,5 +32,5 @@ export function createScene(container: HTMLElement): SceneContext {
     renderer.setSize(container.clientWidth, container.clientHeight);
   });
 
-  return { renderer, scene, camera, controls };
+  return { renderer, scene, camera };
 }

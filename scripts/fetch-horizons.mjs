@@ -19,16 +19,24 @@ const TARGETS = [
   },
 ];
 const EPOCHS = [{ date: '2026-01-01T00:00:00Z', jd: 2461041.5 }];
+// Moons: position relative to the parent's centre, km. Simplified mean elements leave out perturbations,
+// so tolerances are wide (measured 2000–2030: Moon ≤ 10,800 km, Phobos ≤ 560 km).
+const MOON_TARGETS = [
+  { id: '301', center: '500@399', body: 'moon', toleranceKm: 15000,
+    toleranceNote: 'Mean elements omit evection/variation etc. (several thousand km).' },
+  { id: '401', center: '500@499', body: 'phobos', toleranceKm: 1000,
+    toleranceNote: 'SSD mean elements are published to 1–3 significant figures.' },
+];
 
-async function fetchVector(id, jd) {
+async function fetchVector(id, jd, center = '500@10', units = 'AU-D') {
   const params = new URLSearchParams({
     format: 'json',
     COMMAND: `'${id}'`,
     EPHEM_TYPE: "'VECTORS'",
-    CENTER: "'500@10'",
+    CENTER: `'${center}'`,
     REF_PLANE: "'ECLIPTIC'",
     REF_SYSTEM: "'ICRF'",
-    OUT_UNITS: "'AU-D'",
+    OUT_UNITS: `'${units}'`,
     VEC_TABLE: "'1'",
     CSV_FORMAT: "'YES'",
     TIME_TYPE: "'TDB'",
@@ -55,6 +63,14 @@ for (const { date, jd } of EPOCHS) {
   }
 }
 
+const relativeEntries = [];
+for (const { date, jd } of EPOCHS) {
+  for (const { id, center, body, ...extra } of MOON_TARGETS) {
+    const v = await fetchVector(id, jd, center, 'KM-S');
+    relativeEntries.push({ body, horizonsId: id, center, horizonsName: v.name, date, jd: v.jd, x: v.x, y: v.y, z: v.z, ...extra });
+  }
+}
+
 const fixture = {
   _README:
     'JPL Horizons heliocentric position vectors used as ground truth. Regenerate with `node scripts/fetch-horizons.mjs`. ' +
@@ -67,6 +83,8 @@ const fixture = {
   timeScale: 'TDB',
   retrieved: new Date().toISOString().slice(0, 10),
   entries,
+  _relativeReadme: 'Moon positions relative to the centre of their parent (Horizons CENTER = 500@<parent>), in km. Optional "toleranceKm".',
+  relativeEntries,
 };
 writeFileSync(new URL('../tests/fixtures/horizons.json', import.meta.url), JSON.stringify(fixture, null, 2) + '\n');
 console.log(entries);
