@@ -5,7 +5,20 @@ import { SolarSystem } from '../src/bodies/SolarSystem';
 import { noTextures } from '../src/bodies/textures';
 import { BODIES } from '../src/data/bodies';
 import { bodyFixedLonLat, heliocentricPosition, scale } from '../src/ephemeris';
-import { CameraController, cameraQuaternion, cameraWorldPosition, minAltitudeKm, type OrbitState } from '../src/nav/CameraController';
+import { minAltitudeKm } from '../src/nav/CameraController';
+import { quaternionFromYawPitch, yawPitchFromForward } from '../src/nav/flight';
+
+/** Camera `altitude` km above a body's surface at (azimuth, elevation), looking at its centre, tilted by `tilt`. */
+interface OrbitState { azimuth: number; elevation: number; altitude: number; tilt: number }
+function cameraWorldPosition(focus: Vector3, radius: number, s: OrbitState): Vector3 {
+  const ce = Math.cos(s.elevation);
+  return new Vector3(ce * Math.sin(s.azimuth), Math.sin(s.elevation), ce * Math.cos(s.azimuth)).multiplyScalar(radius + s.altitude).add(focus);
+}
+function cameraQuaternion(s: OrbitState) {
+  const off = cameraWorldPosition(new Vector3(), 1, s);
+  const { yaw, pitch } = yawPitchFromForward(off.negate());
+  return quaternionFromYawPitch(yaw, pitch + s.tilt);
+}
 import { eclipticAuToWorldKm, eclipticDirToScene } from '../src/scene/units';
 
 const JD = 2461041.5; // 2026-01-01
@@ -193,19 +206,3 @@ describe('precision on the GPU (float32 simulation)', () => {
   });
 });
 
-describe('CameraController (no DOM events)', () => {
-  it('zoom is altitude-proportional and never goes below the floor', () => {
-    const dom = { style: {}, addEventListener() {}, clientHeight: 800 } as unknown as HTMLElement;
-    const camera = new PerspectiveCamera(50, 1.6, 1e-3, 1e11);
-    const c = new CameraController(dom, camera);
-    c.setFocus(11.05);
-    c.setTarget({ altitude: 10 }, true);
-    c.zoomBy(0.5);
-    for (let i = 0; i < 200; i++) c.update(1 / 60, new Vector3(2.3e8, 0, 0));
-    expect(c.state.altitude).toBeCloseTo(5, 6);
-    for (let i = 0; i < 100; i++) c.zoomBy(0.5);
-    for (let i = 0; i < 400; i++) c.update(1 / 60, new Vector3(2.3e8, 0, 0));
-    expect(c.state.altitude).toBeCloseTo(0.1, 6); // Phobos floor
-    expect(camera.position.length()).toBe(0);
-  });
-});

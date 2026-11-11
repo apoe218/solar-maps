@@ -50,6 +50,15 @@ export class SolarSystem {
     return this.byId.get(id);
   }
 
+  /** World position (float64 km) of body `id` at Julian Date `jd`, without changing the scene. */
+  predictWorld(id: string, jd: number, out = new Vector3()): Vector3 {
+    out.set(0, 0, 0);
+    for (let b = this.byId.get(id); b; b = b.record.parent ? this.byId.get(b.record.parent) : undefined) {
+      out.add(eclipticAuToWorldKm(relativePosition(b.record, jd), this.tmp));
+    }
+    return out;
+  }
+
   /** Update float64 world positions, spins and orbit lines for Julian Date `jd`. */
   setTime(jd: number): void {
     for (const body of this.bodies) {

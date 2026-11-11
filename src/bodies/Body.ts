@@ -53,6 +53,8 @@ export class Body {
   readonly pole: Vector3;
   /** last appearance decision (for hysteresis and the debug overlay) */
   isDot = false;
+  /** radius of what was last drawn (sphere or dot), CSS px — for picking and the selection ring */
+  screenRadiusPx = 0;
   private readonly minPixels: number;
 
   constructor(readonly record: BodyRecord, loadTexture: TextureLoaderFn) {
@@ -113,6 +115,7 @@ export class Body {
     this.dot.visible = a.dot;
     (this.dot.material as PointsMaterial).size = a.dotPx;
     this.tilt.scale.setScalar(a.sphereScale);
+    this.screenRadiusPx = a.dot ? a.dotPx / 2 : (px * a.sphereScale) / 2;
     return px;
   }
 }
